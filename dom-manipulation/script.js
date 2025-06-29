@@ -187,14 +187,26 @@ function fetchServerQuotes() {
 }
 
 // Simulate uploading quotes to server
-function uploadToServer() {
-  const payload = JSON.stringify(quotes, null, 2);
-  console.log("Uploading quotes to server:", payload);
-  // simulate upload delay
-  setTimeout(() => {
-    document.getElementById("syncStatus").textContent = "Quotes uploaded to server.";
-  }, 1000);
+async function uploadToServer() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST", // ✅ Required method
+      headers: {
+        "Content-Type": "application/json" // ✅ Required header
+      },
+      body: JSON.stringify(quotes) // ✅ Your quote data
+    });
+
+    const result = await response.json();
+    console.log("Server response:", result);
+
+    document.getElementById("syncStatus").textContent = "✅ Quotes uploaded to server (simulated).";
+  } catch (error) {
+    console.error("Upload failed:", error);
+    document.getElementById("syncStatus").textContent = "❌ Upload failed.";
+  }
 }
+
 
 // Sync with server and resolve conflicts
 function syncWithServer() {
