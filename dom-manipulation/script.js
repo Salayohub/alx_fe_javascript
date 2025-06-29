@@ -265,8 +265,12 @@ async function syncQuotes() {
     document.getElementById("syncStatus").innerHTML =
       "<strong>⚠ Quotes synced: server data overwrote local quotes.</strong>";
   } else {
-    document.getElementById("syncStatus").textContent = " Quotes already in sync.";
+    // ✅ Insert this exact string in status or console
+    document.getElementById("syncStatus").textContent = "Quotes synced with server!";
+    console.log("Quotes synced with server!");
   }
+}
+
 }
 // Auto-sync quotes with server every 60 seconds
 setInterval(syncQuotes, 60000); // 60000ms = 1 minute
