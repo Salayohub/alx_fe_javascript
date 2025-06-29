@@ -190,17 +190,17 @@ function fetchServerQuotes() {
 async function uploadToServer() {
   try {
     const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
-      method: "POST", // ✅ Required method
+      method: "POST", //  Required method
       headers: {
-        "Content-Type": "application/json" // ✅ Required header
+        "Content-Type": "application/json" //  Required header
       },
-      body: JSON.stringify(quotes) // ✅ Your quote data
+      body: JSON.stringify(quotes) //  Your quote data
     });
 
     const result = await response.json();
     console.log("Server response:", result);
 
-    document.getElementById("syncStatus").textContent = "✅ Quotes uploaded to server (simulated).";
+    document.getElementById("syncStatus").textContent = " Quotes uploaded to server (simulated).";
   } catch (error) {
     console.error("Upload failed:", error);
     document.getElementById("syncStatus").textContent = "❌ Upload failed.";
@@ -249,7 +249,8 @@ async function fetchQuotesFromServer() {
 }
 
 
-async function syncWithServer() {
+//  Combines fetch and update logic
+async function syncQuotes() {
   const serverQuotes = await fetchQuotesFromServer();
 
   const localJson = JSON.stringify(quotes);
@@ -262,8 +263,8 @@ async function syncWithServer() {
     filterQuotes();
 
     document.getElementById("syncStatus").innerHTML =
-      "<strong>⚠ Server data loaded. Local quotes were overwritten.</strong>";
+      "<strong>⚠ Quotes synced: server data overwrote local quotes.</strong>";
   } else {
-    document.getElementById("syncStatus").textContent = "Quotes already in sync with server.";
+    document.getElementById("syncStatus").textContent = "✅ Quotes already in sync.";
   }
 }
