@@ -217,35 +217,41 @@ function syncWithServer() {
   });
 }
 
-function fetchQuotesFromServer() {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      // Simulated server data
-      const serverQuotes = [
-        { text: "Server-synced wisdom.", category: "Server" },
-        { text: "Always fetch before you fail.", category: "Sync" }
-      ];
-      resolve(serverQuotes);
-    }, 1000); // simulate network delay
-  });
+//  Required: async function that fetches from JSONPlaceholder
+async function fetchQuotesFromServer() {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/posts");
+    const data = await response.json();
+
+    // Transform the data to match your quote structure
+    const serverQuotes = data.slice(0, 5).map(post => ({
+      text: post.title,
+      category: "Server"
+    }));
+
+    return serverQuotes;
+  } catch (error) {
+    console.error("Error fetching quotes from server:", error);
+    return [];
+  }
 }
 
-function syncWithServer() {
-  fetchQuotesFromServer().then(serverQuotes => {
-    const localJson = JSON.stringify(quotes);
-    const serverJson = JSON.stringify(serverQuotes);
 
-    if (localJson !== serverJson) {
-      // Server takes precedence in this simple strategy
-      quotes = serverQuotes;
-      saveQuotes();
-      populateCategories();
-      filterQuotes();
+async function syncWithServer() {
+  const serverQuotes = await fetchQuotesFromServer();
 
-      document.getElementById("syncStatus").innerHTML =
-        "<strong>⚠ Server data loaded. Local quotes were overwritten.</strong>";
-    } else {
-      document.getElementById("syncStatus").textContent = "Quotes already in sync with server.";
-    }
-  });
+  const localJson = JSON.stringify(quotes);
+  const serverJson = JSON.stringify(serverQuotes);
+
+  if (localJson !== serverJson) {
+    quotes = serverQuotes;
+    saveQuotes();
+    populateCategories();
+    filterQuotes();
+
+    document.getElementById("syncStatus").innerHTML =
+      "<strong>⚠ Server data loaded. Local quotes were overwritten.</strong>";
+  } else {
+    document.getElementById("syncStatus").textContent = "Quotes already in sync with server.";
+  }
 }
