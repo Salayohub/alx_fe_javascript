@@ -171,3 +171,48 @@ createAddQuoteForm();
 populateCategories();
 document.getElementById("newQuote").addEventListener("click", showRandomQuote);
 filterQuotes(); // apply filter from saved preference
+
+// Simulate a server response (fetched quotes)
+function fetchServerQuotes() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Simulated server data (JSONPlaceholder style)
+      const serverQuotes = [
+        { text: "Server-synced wisdom.", category: "Server" },
+        { text: "Always fetch before you fail.", category: "Sync" }
+      ];
+      resolve(serverQuotes);
+    }, 1000);
+  });
+}
+
+// Simulate uploading quotes to server
+function uploadToServer() {
+  const payload = JSON.stringify(quotes, null, 2);
+  console.log("Uploading quotes to server:", payload);
+  // simulate upload delay
+  setTimeout(() => {
+    document.getElementById("syncStatus").textContent = "Quotes uploaded to server.";
+  }, 1000);
+}
+
+// Sync with server and resolve conflicts
+function syncWithServer() {
+  fetchServerQuotes().then(serverQuotes => {
+    const localJson = JSON.stringify(quotes);
+    const serverJson = JSON.stringify(serverQuotes);
+
+    if (localJson !== serverJson) {
+      // Basic Conflict Strategy: Server wins
+      quotes = serverQuotes;
+      saveQuotes();
+      populateCategories();
+      filterQuotes();
+
+      document.getElementById("syncStatus").innerHTML =
+        "<strong>⚠ Server data loaded. Local quotes were overwritten.</strong>";
+    } else {
+      document.getElementById("syncStatus").textContent = "Quotes already in sync with server.";
+    }
+  });
+}
