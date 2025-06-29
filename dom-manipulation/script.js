@@ -216,3 +216,36 @@ function syncWithServer() {
     }
   });
 }
+
+function fetchQuotesFromServer() {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // Simulated server data
+      const serverQuotes = [
+        { text: "Server-synced wisdom.", category: "Server" },
+        { text: "Always fetch before you fail.", category: "Sync" }
+      ];
+      resolve(serverQuotes);
+    }, 1000); // simulate network delay
+  });
+}
+
+function syncWithServer() {
+  fetchQuotesFromServer().then(serverQuotes => {
+    const localJson = JSON.stringify(quotes);
+    const serverJson = JSON.stringify(serverQuotes);
+
+    if (localJson !== serverJson) {
+      // Server takes precedence in this simple strategy
+      quotes = serverQuotes;
+      saveQuotes();
+      populateCategories();
+      filterQuotes();
+
+      document.getElementById("syncStatus").innerHTML =
+        "<strong>⚠ Server data loaded. Local quotes were overwritten.</strong>";
+    } else {
+      document.getElementById("syncStatus").textContent = "Quotes already in sync with server.";
+    }
+  });
+}
